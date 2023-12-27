@@ -11,10 +11,10 @@ client = gspread.authorize(credentials)
 # print(client)
 
 # Open a spreadsheet by name
-sheet = client.open('User Details telegram')
+sheet = client.open('usedet')
 
 # Or open by URL
-sheet = client.open_by_url('https://docs.google.com/spreadsheets/d/1Yohr18J_x-qwIz7Cc4r47yZZVYKoWIcFQxE66GHfxRA/edit?usp=sharing')
+# sheet = client.open_by_url('https://docs.google.com/spreadsheets/d/1Yohr18J_x-qwIz7Cc4r47yZZVYKoWIcFQxE66GHfxRA/edit?usp=sharing')
 # Get the first sheet
 worksheet = sheet.sheet1
 
@@ -24,3 +24,8 @@ print(cell_value)
 # Get all values from a range
 all_values = worksheet.get_all_values()
 print(all_values)
+insertRow = ["Zayn","Malik",12,20]
+worksheet.insert_row(insertRow,6)
+data = worksheet.get_all_values()
+num_rows_filled = len(data)
+print(f"Number of filled rows: {num_rows_filled}")

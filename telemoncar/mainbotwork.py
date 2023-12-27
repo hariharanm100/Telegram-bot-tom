@@ -2,7 +2,8 @@ from telethon.sync import TelegramClient, events, Button
 from telethon.tl.types import InputPeerUser, InputPeerChannel
 from telethon.tl.functions.channels import InviteToChannelRequest
 from telethon.tl.functions.messages import SendMessageRequest
-
+import schedule
+from datetime import datetime, timedelta
 # Bot credentials
 bot_api_id = 27824897
 bot_api_hash = 'c7360424c507d2fb40196bbd6cd5c648'
@@ -20,11 +21,14 @@ if not user_client.is_user_authorized():
     user_client.sign_in(phone, input('Enter the code: '))
 
 
+
+
 async def main():
     
     # Create bot client
     bot_client = TelegramClient('bot_session', bot_api_id, bot_api_hash)
     await bot_client.start(bot_token=bot_token)
+
 
 
     @bot_client.on(events.NewMessage(pattern='/start'))
@@ -76,6 +80,7 @@ async def main():
 
     @bot_client.on(events.CallbackQuery(pattern=b'pay_service_1'))
     async def pay_service_1(event):
+        
         confirmation_message = "Payment for Football confirmed! Thank you." 
         await event.edit(confirmation_message)
         acceptOrDeclineMessage = "<a href='https://docs.google.com/document/d/e/2PACX-1vTvzil-qCjU2kUQ2NWDGiOcRNVzMPV7_fWK_bJLUAQOurmEZ3D4R712xJ5ayz0vYaEaycMDcmmOCM3S/pub'>Terms and Conditions</a>"
