@@ -26,6 +26,14 @@ all_values = worksheet.get_all_values()
 print(all_values)
 insertRow = ["Zayn","Malik",12,20]
 worksheet.insert_row(insertRow,6)
+
 data = worksheet.get_all_values()
 num_rows_filled = len(data)
-print(f"Number of filled rows: {num_rows_filled}")
+print(num_rows_filled)
+for row in data:
+    print(row)
+row = 3
+col = 2  # B column
+value = "Hello, World!"
+
+worksheet.update_cell(row, col, value)

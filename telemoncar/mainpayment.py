@@ -1,4 +1,4 @@
-from telethon.sync import TelegramClient, events, Button
+from telethon.sync import TelegramClient, events, Button, types
 from telethon.tl.types import InputPeerUser, InputPeerChannel
 from telethon.tl.functions.channels import InviteToChannelRequest
 from telethon.tl.functions.messages import SendMessageRequest
@@ -32,15 +32,15 @@ num_rows_filled = len(data)
 
 
 # Bot credentials
-bot_api_id = 27824897
-bot_api_hash = 'c7360424c507d2fb40196bbd6cd5c648'
-bot_token = '6551842711:AAHr6NidbwxcByMNb5ZiswX-Jrv8RYaektA'
+bot_api_id = 26689721
+bot_api_hash = '41120962662844279ab6a08a0f60774f'
+bot_token = '6321748774:AAFOXyERQa333nNIc3GBxcjM0s_uEL4LZi4'
 
 
 # User credentials
-user_api_id = 27824897
-user_api_hash = 'c7360424c507d2fb40196bbd6cd5c648'
-phone = '+918489798100'
+# user_api_id = 27824897
+# user_api_hash = 'c7360424c507d2fb40196bbd6cd5c648'
+# phone = '+918489798100'
 # user_client = TelegramClient(phone, user_api_id, user_api_hash)
 # user_client.connect()
 # if not user_client.is_user_authorized():
@@ -48,6 +48,50 @@ phone = '+918489798100'
 #     user_client.sign_in(phone, input('Enter the code: '))
 
 bot_client = TelegramClient('bot_session', bot_api_id, bot_api_hash)
+
+
+provider_token = '284685063:TEST:ZDZhZjlhMjczMjdm'
+
+# let's put it in one function for more easier way
+def generate_invoice(price_label: str, price_amount: int, currency: str, title: str,
+                     description: str, payload: str, start_param: str) -> types.InputMediaInvoice:
+    price = types.LabeledPrice(label=price_label, amount=price_amount)  # label - just a text, amount=10000 means 100.00
+    invoice = types.Invoice(
+        currency=currency,  # currency like USD
+        prices=[price],  # there could be a couple of prices.
+        test=True,  # if you're working with test token, else set test=False.
+        # More info at https://core.telegram.org/bots/payments
+
+        # params for requesting specific fields
+        name_requested=False,
+        phone_requested=False,
+        email_requested=False,
+        shipping_address_requested=False,
+
+        # if price changes depending on shipping
+        flexible=False,
+
+        # send data to provider
+        phone_to_provider=False,
+        email_to_provider=False
+    )
+    return types.InputMediaInvoice(
+        title=title,
+        description=description,
+        invoice=invoice,
+        payload=payload.encode('UTF-8'),  # payload, which will be sent to next 2 handlers
+        provider=provider_token,
+
+        provider_data=types.DataJSON('{}'),
+        # data about the invoice, which will be shared with the payment provider. A detailed description of
+        # required fields should be provided by the payment provider.
+
+        start_param=start_param,
+        # Unique deep-linking parameter. May also be used in UpdateBotPrecheckoutQuery
+        # see: https://core.telegram.org/bots#deep-linking
+        # it may be the empty string if not needed
+
+    )
 
 
 async def kick_user_from_group(service, userId, userHash, Userstatus, insertLineCount):
@@ -126,6 +170,13 @@ async def service_1(event):
         "\u2023 NOTE: Spaces in each group are limited to protect the odds. First come, first served. \n"
     )
     await event.respond(footballOption)
+    await bot_client.send_message(
+        event.chat_id, 'Sending invoice A',
+        file=generate_invoice(
+            price_label='Pay', price_amount=10000, currency='RUB', title='Title A', description='description A',
+            payload='product A', start_param='abc'
+        )
+    )
     payment_message = "To proceed with Football, please make the payment."
     buttons = [
         [
@@ -264,7 +315,7 @@ async def add_members_service_3(event):
     targetGroupAccessHash = -198665311552621838
     target_group_entity = InputPeerChannel(targetGroupId,targetGroupAccessHash)
     sender = await event.get_sender()
-    user_to_add = InputPeerUser(sender.id, sender.access_hash)
+    user_to_add = InputPeBasketballerUser(sender.id, sender.access_hash)
     # await user_client(InviteToChannelRequest(target_group_entity,[user_to_add]))
     accept_message = "You have successfully added to NBA Props Group group" 
     await event.edit(accept_message)
